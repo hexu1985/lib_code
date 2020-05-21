@@ -1,17 +1,22 @@
+SUBDIRS = advio bcast icmpd inetd intro ioctl ipopts libgai mcast mysdr names nonblock oob rtt select server sigio sockopt ssntp tcpcliserv threads udpcliserv unixdomain
 
-SUBDIRS = advio bcast icmpd inetd intro ioctl ipopts mcast mysdr names nonblock oob rtt select server sigio sockopt ssntp tcpcliserv threads udpcliserv unixdomain
+.PHONY: all everything debug clean
 
-all:
-	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common
+all: everything
 
-clean:
-	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common
-
-distclean:
-	@$(MAKE) $(MFLAGS) WHAT_TO_MAKE=$@ common
-
-common:
+everything:
 	@for dir in $(SUBDIRS); do \
-		echo "Making $(WHAT_TO_MAKE) in $$dir..."; \
-		(cd $$dir && $(MAKE) $(MFLAGS) $(WHAT_TO_MAKE)) || exit 1; \
+		$(MAKE) $(T) --directory=$$dir || exit 1; \
 	done
+
+debug: T := debug
+debug: all
+
+profile: T := profile
+profile: all
+
+clean:	T := clean
+clean: everything
+
+
+
